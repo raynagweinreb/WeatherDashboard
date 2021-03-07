@@ -28,7 +28,7 @@ function getCityWeather(userUrl){
       })
       .then(function(response){
           //console.log(response)
-      $("#results").removeClass("d-none")
+$("#results").removeClass("d-none")
   $("#cityName").text(response.name)
     var temp = (1.8) * (response.main.temp - 273) + (32.);
    
@@ -38,7 +38,7 @@ function getCityWeather(userUrl){
 
     var lat = response.coord.lat;
     var lon = response.coord.lon;
-    var UVQueryURL = "http://api.openweathermap.org/data/2.5/uvi?lat="+lat+"&lon="+lon+"&appid="+apiKey
+    var UVQueryURL = "https://api.openweathermap.org/data/2.5/uvi?lat="+lat+"&lon="+lon+"&appid="+apiKey
     $.ajax({
         url: UVQueryURL,
         method: "GET"
