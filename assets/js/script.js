@@ -4,13 +4,16 @@ var userInput = $("#userInput");
 var apiKey = "115001272ca58c47d98dac11e1d9c60b";
 var todaysDate = moment();
 $("#currentDay").text(todaysDate.format("MMMM Do YYYY, h:mm: a"));
-
+var cities=[];
 
 //store userinput 
 function storeUserInput(e){
     e.preventDefault()
+    
+
             $("#cityList").append("<li class = 'list-group-item'>" + userInput.val() + "</li>")
-            localStorage.setItem("cities"+userInput.val(), userInput.val());
+            cities.push(userInput.val())
+            localStorage.setItem("cities",JSON.stringify(cities));
         //variable for url
     var userUrl = $("#userInput").val().trim().toLowerCase();
     
@@ -20,6 +23,29 @@ function storeUserInput(e){
 }
 //get weather information 
 function getCityWeather(userUrl){
+    $("#cityName").text("");
+    $("#temperature").text("");
+    $("#humidity").text("");
+    $("#windSpeed").text("");
+    $("#uvIndex").text("")
+    $("#date1").text("")
+    $("#date2").text("")
+    $("#date3").text("")
+    $("#date4").text("")
+    $("#date5").text("")
+    $("#temperatureForecast1").text("")
+    $("#temperatureForecast2").text("")
+    $("#temperatureForecast3").text("")
+    $("#temperatureForecast4").text("")
+    $("#temperatureForecast5").text("")
+
+    $("#humidityForecast1").text("")
+    $("#humidityForecast2").text("")
+    $("#humidityForecast3").text("")
+    $("#humidityForecast4").text("")
+    $("#humidityForecast5").text("")
+
+
     var queryURL= "https://api.openweathermap.org/data/2.5/weather?q=" + userUrl +"&appid=115001272ca58c47d98dac11e1d9c60b"
 
     $.ajax({
@@ -32,9 +58,9 @@ $("#results").removeClass("d-none")
   $("#cityName").text(response.name)
     var temp = (1.8) * (response.main.temp - 273) + (32.);
    
-    $("#temperature").append( temp + " F");
-    $("#humidity").append(response.main.humidity + ( "%"));
-              $("#windSpeed").append(response.wind.speed + "MPH");
+    $("#temperature").append( "Temperature: "+ temp.toFixed(2) + " F");
+    $("#humidity").append("Humidty: "+response.main.humidity + ( "%"));
+              $("#windSpeed").append("Wind Speed: "+response.wind.speed + "MPH");
 
     var lat = response.coord.lat;
     var lon = response.coord.lon;
@@ -47,7 +73,7 @@ $("#results").removeClass("d-none")
           console.log(uv);
      
 
-    $("#uvIndex").append(uv.value).addClass("bg-danger");
+    $("#uvIndex").append("UV Index: "+uv.value).addClass("bg-danger");
 })
 
 var id = response.id; 
@@ -94,17 +120,17 @@ $.ajax({
               ".png"
           );
  
-          $("#temperatureForecast1").append((1.8)*(getforecast.list[6].main.temp-273) + (32)+ (" F"));
-          $("#temperatureForecast2").append((1.8)*(getforecast.list[14].main.temp-273) + (32)+ (" F"));
-          $("#temperatureForecast3").append((1.8)*(getforecast.list[22].main.temp-273) + (32)+ (" F"));
-          $("#temperatureForecast4").append((1.8)*(getforecast.list[30].main.temp-273) + (32)+ (" F"));
-          $("#temperatureForecast5").append((1.8)*(getforecast.list[38].main.temp-273) + (32)+ (" F"));
+          $("#temperatureForecast1").append(("Temperature: ")+((1.8)*(getforecast.list[6].main.temp-273) + (32)).toFixed(2)+ (" F"));
+          $("#temperatureForecast2").append(("Temperature: ")+((1.8)*(getforecast.list[14].main.temp-273) + (32)).toFixed(2)+ (" F"));
+          $("#temperatureForecast3").append(("Temperature: ")+((1.8)*(+getforecast.list[22].main.temp-273) + (32)).toFixed(2)+ (" F"));
+          $("#temperatureForecast4").append(("Temperature: ")+((1.8)*(+getforecast.list[30].main.temp-273) + (32)).toFixed(2)+ (" F"));
+          $("#temperatureForecast5").append(("Temperature: ")+((1.8)*(+getforecast.list[38].main.temp-273) + (32)).toFixed(2)+ (" F"));
 
-          $("#humidityForecast1").append(getforecast.list[6].main.humidity+("%"));
-          $("#humidityForecast2").append(getforecast.list[14].main.humidity+("%"));
-          $("#humidityForecast3").append(getforecast.list[22].main.humidity+("%"));
-          $("#humidityForecast4").append(getforecast.list[30].main.humidity+("%"));
-          $("#humidityForecast5").append(getforecast.list[38].main.humidity+("%"));
+          $("#humidityForecast1").append("Humidity: "+getforecast.list[6].main.humidity+("%"));
+          $("#humidityForecast2").append("Humidity: "+getforecast.list[14].main.humidity+("%"));
+          $("#humidityForecast3").append("Humidity: "+getforecast.list[22].main.humidity+("%"));
+          $("#humidityForecast4").append("Humidity: "+getforecast.list[30].main.humidity+("%"));
+          $("#humidityForecast5").append("Humidity: "+getforecast.list[38].main.humidity+("%"));
 
 
 });  
@@ -120,10 +146,29 @@ function cityHistoryClick(e){
 
 }
 }
+
+function lastcity(){
+    var lastcity= JSON.parse(localStorage.getItem("cities"))
+    for (var i =0 ; i <localStorage.length; i++)
+    lastcityhistory=lastcity[i-1];
+    getCityWeather(lastcityhistory)
+
+}
 $( window ).on( "load", function() {
-    for (var i =0; i<localStorage.length ;i++)
-    $("#cityList").append("<li class = 'list-group-item'>" + localStorage.getItem(localStorage.key(i))+"</p>");
-    })
+    for (var i=0; i<localStorage.length;i++){
+    var citiesOnload= JSON.parse(localStorage.getItem("cities"))
+     citiesonloadlist= citiesOnload[i];
+    console.log(citiesonloadlist);
+    var listEl = $("<li>"+citiesonloadlist+"</li>")
+    $(listEl).attr("class","list-group-item");
+    $("#cityList").append(listEl)
+    }
+    lastcity()
+
+})
+
+    //$("#cityList").append("<li class = 'list-group-item'>" + JSON.parse((localStorage.getItem("cities")+"</p>")));
+    //})
 
 
 $(searchBtn).on("click",storeUserInput);
