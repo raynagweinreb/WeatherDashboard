@@ -53,7 +53,7 @@ function getCityWeather(userUrl){
         method: "GET"
       })
       .then(function(response){
-          //console.log(response)
+          console.log(response)
 $("#results").removeClass("d-none")
   $("#cityName").text(response.name)
     var temp = (1.8) * (response.main.temp - 273) + (32.);
